@@ -16,7 +16,6 @@ class App(tk.Tk):
 
         self.lb_sep = tk.Label(self, text="Разделитель csv:")
         self.lb_sep.place(rely=0.02, relx=0.05)
-
         sep = ["  ;", "  ,", "  |"]
         self.menu_choose_sep = ttk.Combobox(self, values=sep, state="readonly")
         self.menu_choose_sep.place(rely=0.02, relx=0.15)
@@ -65,10 +64,13 @@ class App(tk.Tk):
         treescrollx.pack(side="bottom", fill="x")
         treescrolly.pack(side="right", fill="y")
         self.canv = tk.Canvas(self, width=500, height=500, bg="white")
+
+
         self.drawing()
 
     def drawing(self):
         self.canv.delete("all")
+
         self.canv.create_line(250, 500, 250, 0, width=2, arrow=tk.LAST)
         self.canv.create_line(0, 250, 500, 250, width=2, arrow=tk.LAST)
         for _ in range(0, 240, 22):
@@ -82,7 +84,7 @@ class App(tk.Tk):
         csvsep = self.menu_choose_sep.get()[2:]
         if csvsep:
             filetypes = (("Таблица с данными ", "*.csv"),)
-            filename = fd.askopenfilename(title="Открыть файл", initialdir="/",
+            filename = fd.askopenfilename(title="Открыть файл", initialdir="./",
                                           filetypes=filetypes)
             self.df_raw = pd.read_csv(filename, sep=csvsep)
             headers = list(self.df_raw.columns)
@@ -127,7 +129,6 @@ class App(tk.Tk):
         max_scale = max(list(map(lambda point: max([abs(point[0]), abs(point[1])]), points)))
         self.k = 220 / max_scale
 
-        self.canv.create_text(40, 20, text="Ц.Д.= " + str(max_scale / 10), justify=tk.CENTER, font="Verdana 10")
         for i in range(1, 11):
             self.canv.create_text(250 + 22 * i, 240, text=(int(max_scale / (10 / i))), justify=tk.CENTER,
                                   font="Verdana 6")
@@ -181,6 +182,9 @@ class App(tk.Tk):
         print(point)
         x, y = point[0] * self.k, point[1] * self.k
         self.canv.create_oval(250 + x - 8, 250 - y - 8, 250 + x + 8, 250 - y + 8, fill="red")
+
+        lb_pos = tk.Label(self, text="Положение объекта = (" + str(round(x, 2)) + ", " + str(round(y, 2)) + ")")
+        lb_pos.place(rely=0.6, relx=0.6)
 
 
 def f_i(x, y, x_i, y_i):
